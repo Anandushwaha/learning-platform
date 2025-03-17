@@ -1,0 +1,233 @@
+# Step 2: User Role Management - Testing Guide
+
+This document contains API URLs, example request bodies, and expected responses for testing the User Role Management functionality.
+
+## Testing with Postman
+
+### 1. Register as a Student
+
+**URL:** `POST http://localhost:5000/api/auth/register`
+
+**Request Body:**
+```json
+{
+  "name": "Student User",
+  "email": "student@example.com",
+  "password": "password123",
+  "role": "student"
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "name": "Student User",
+    "email": "student@example.com",
+    "role": "student",
+    "isEmailVerified": false,
+    "profilePicture": "default-profile.jpg",
+    "_id": "...",
+    "createdAt": "...",
+    "updatedAt": "..."
+  }
+}
+```
+
+### 2. Register as a Teacher
+
+**URL:** `POST http://localhost:5000/api/auth/register`
+
+**Request Body:**
+```json
+{
+  "name": "Teacher User",
+  "email": "teacher@example.com",
+  "password": "password123",
+  "role": "instructor"
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "name": "Teacher User",
+    "email": "teacher@example.com",
+    "role": "instructor",
+    "isEmailVerified": false,
+    "profilePicture": "default-profile.jpg",
+    "_id": "...",
+    "createdAt": "...",
+    "updatedAt": "..."
+  }
+}
+```
+
+### 3. Login as Student
+
+**URL:** `POST http://localhost:5000/api/auth/login`
+
+**Request Body:**
+```json
+{
+  "email": "student@example.com",
+  "password": "password123"
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "_id": "...",
+    "name": "Student User",
+    "email": "student@example.com",
+    "role": "student",
+    "isEmailVerified": false,
+    "profilePicture": "default-profile.jpg",
+    "createdAt": "...",
+    "updatedAt": "..."
+  }
+}
+```
+
+### 4. Login as Teacher
+
+**URL:** `POST http://localhost:5000/api/auth/login`
+
+**Request Body:**
+```json
+{
+  "email": "teacher@example.com",
+  "password": "password123"
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "_id": "...",
+    "name": "Teacher User",
+    "email": "teacher@example.com",
+    "role": "instructor",
+    "isEmailVerified": false,
+    "profilePicture": "default-profile.jpg",
+    "createdAt": "...",
+    "updatedAt": "..."
+  }
+}
+```
+
+### 5. Access Student Dashboard (as Student)
+
+**URL:** `GET http://localhost:5000/api/students/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer <student_token>
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "message": "Student dashboard access granted",
+  "data": {
+    "user": {
+      "_id": "...",
+      "name": "Student User",
+      "email": "student@example.com",
+      "role": "student"
+    },
+    "studentResources": {
+      "courses": [],
+      "assignments": [],
+      "notifications": []
+    }
+  }
+}
+```
+
+### 6. Access Teacher Dashboard (as Teacher)
+
+**URL:** `GET http://localhost:5000/api/teachers/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer <teacher_token>
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "message": "Teacher dashboard access granted",
+  "data": {
+    "user": {
+      "_id": "...",
+      "name": "Teacher User",
+      "email": "teacher@example.com",
+      "role": "instructor"
+    },
+    "teacherResources": {
+      "courses": [],
+      "students": [],
+      "assignments": [],
+      "notifications": []
+    }
+  }
+}
+```
+
+### 7. Test Role-based Access Control - Student trying to access Teacher Dashboard
+
+**URL:** `GET http://localhost:5000/api/teachers/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer <student_token>
+```
+
+**Expected Response:**
+```json
+{
+  "success": false,
+  "message": "User role student is not authorized to access this route"
+}
+```
+
+### 8. Test Role-based Access Control - Teacher trying to access Student Dashboard
+
+**URL:** `GET http://localhost:5000/api/students/dashboard`
+
+**Headers:**
+```
+Authorization: Bearer <teacher_token>
+```
+
+**Expected Response:**
+```json
+{
+  "success": false,
+  "message": "User role instructor is not authorized to access this route"
+}
+```
+
+## Testing via Frontend
+
+1. Register a new student account through the frontend
+2. Verify redirection to the student dashboard
+3. Log out and register a new teacher account
+4. Verify redirection to the teacher dashboard
+5. Try to navigate directly to `/teacher/dashboard` as a student (should see unauthorized page)
+6. Try to navigate directly to `/student/dashboard` as a teacher (should see unauthorized page) 
