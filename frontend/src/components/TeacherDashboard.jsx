@@ -1,7 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import DashboardLayout from "./DashboardLayout";
+import TeacherCourseManagement from "./TeacherCourseManagement";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
 const TeacherDashboard = () => {
   const [teacherData, setTeacherData] = useState({
@@ -14,6 +16,7 @@ const TeacherDashboard = () => {
   });
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [activeView, setActiveView] = useState("dashboard");
 
   useEffect(() => {
     // Mock data - in a real app, this would be fetched from the backend
@@ -152,7 +155,9 @@ const TeacherDashboard = () => {
       ),
       action: {
         text: "Manage Courses",
-        handler: () => navigate("/teacher/courses"),
+        handler: () => {
+          setActiveView("manageCourses");
+        },
       },
     },
     {
@@ -463,24 +468,29 @@ const TeacherDashboard = () => {
     <>
       <style>{additionalStyles}</style>
       <DashboardLayout pageTitle="Teacher Dashboard" role="teacher">
-        <div className="dashboard-boxes">
-          {dashboardBoxes.map((box, index) => (
-            <div key={index} className="dashboard-box">
-              <div className="box-header">
-                <div className="box-icon">
-                  <i className={box.icon}></i>
+        {activeView === "dashboard" && (
+          <div className="dashboard-boxes">
+            {dashboardBoxes.map((box, index) => (
+              <div key={index} className="dashboard-box">
+                <div className="box-header">
+                  <div className="box-icon">
+                    <i className={box.icon}></i>
+                  </div>
+                  <h3 className="box-title">{box.title}</h3>
                 </div>
-                <h3 className="box-title">{box.title}</h3>
+                <div className="box-content">{box.content}</div>
+                <div className="box-footer">
+                  <button className="box-btn" onClick={box.action.handler}>
+                    {box.action.text}
+                  </button>
+                </div>
               </div>
-              <div className="box-content">{box.content}</div>
-              <div className="box-footer">
-                <button className="box-btn" onClick={box.action.handler}>
-                  {box.action.text}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+        {activeView === "manageCourses" && (
+          <TeacherCourseManagement onBack={() => setActiveView("dashboard")} />
+        )}
       </DashboardLayout>
     </>
   );

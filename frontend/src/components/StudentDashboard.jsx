@@ -1,7 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import DashboardLayout from "./DashboardLayout";
+import StudentCourseManagement from "./StudentCourseManagement";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
 const StudentDashboard = () => {
   const [studentData, setStudentData] = useState({
@@ -14,6 +16,7 @@ const StudentDashboard = () => {
   });
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [activeView, setActiveView] = useState("dashboard");
 
   useEffect(() => {
     // Mock data - in a real app, this would be fetched from the backend
@@ -317,7 +320,9 @@ const StudentDashboard = () => {
       ),
       action: {
         text: "Browse Resources",
-        handler: () => navigate("/student/resources"),
+        handler: () => {
+          setActiveView("browseCourses");
+        },
       },
     },
   ];
@@ -434,6 +439,7 @@ const StudentDashboard = () => {
             </div>
           ))}
         </div>
+        {activeView === "browseCourses" && <StudentCourseManagement />}
       </DashboardLayout>
     </>
   );

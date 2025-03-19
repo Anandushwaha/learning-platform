@@ -1,0 +1,341 @@
+# Step 3: Course Management Testing Documentation
+
+This document provides instructions for testing the course management functionality of the online learning platform using Postman.
+
+## Prerequisites
+- Postman installed on your computer
+- Backend server running on http://localhost:5000
+- Frontend server running on http://localhost:3000
+- User accounts for testing (both student and teacher roles)
+
+## Authentication
+All API endpoints require authentication. In Postman, you should:
+1. Log in using the login API to get a token
+2. Use the token for all subsequent requests:
+   - Set the Authorization header to `Bearer <your_token>` 
+   - Or include the token in your cookies
+
+## API Endpoints
+
+### 1. Create Course (Teachers Only)
+**Endpoint:** `POST /api/courses/create`  
+**Access:** Private (Teachers/Instructors only)
+
+**Example Request Body:**
+```json
+{
+  "title": "Introduction to Computer Science",
+  "className": "CS101",
+  "division": "A",
+  "description": "A beginner-friendly introduction to computer science concepts."
+}
+```
+
+**Expected Success Response (201):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Introduction to Computer Science",
+    "className": "CS101",
+    "division": "A",
+    "description": "A beginner-friendly introduction to computer science concepts.",
+    "teacherId": "60d21b4667d0d8992e610c80",
+    "studentsEnrolled": [],
+    "status": "active",
+    "createdAt": "2023-10-01T14:23:45.123Z",
+    "updatedAt": "2023-10-01T14:23:45.123Z"
+  }
+}
+```
+
+**Expected Error Response (403) - If a student tries to create a course:**
+```json
+{
+  "success": false,
+  "message": "User role student is not authorized to access this route"
+}
+```
+
+### 2. Get Teacher's Courses (Teachers Only)
+**Endpoint:** `GET /api/courses/teacher`  
+**Access:** Private (Teachers/Instructors only)
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Introduction to Computer Science",
+      "className": "CS101",
+      "division": "A",
+      "description": "A beginner-friendly introduction to computer science concepts.",
+      "teacherId": "60d21b4667d0d8992e610c80",
+      "studentsEnrolled": [],
+      "status": "active",
+      "createdAt": "2023-10-01T14:23:45.123Z",
+      "updatedAt": "2023-10-01T14:23:45.123Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Web Development Fundamentals",
+      "className": "WD201",
+      "division": "B",
+      "description": "Learn the basics of web development.",
+      "teacherId": "60d21b4667d0d8992e610c80",
+      "studentsEnrolled": ["60d21b4667d0d8992e610c81"],
+      "status": "active",
+      "createdAt": "2023-10-02T10:15:30.456Z",
+      "updatedAt": "2023-10-02T10:15:30.456Z"
+    }
+  ]
+}
+```
+
+**Expected Error Response (403) - If a student tries to access:**
+```json
+{
+  "success": false,
+  "message": "User role student is not authorized to access this route"
+}
+```
+
+### 3. View All Available Courses
+**Endpoint:** `GET /api/courses`  
+**Access:** Private (All authenticated users)
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "count": 3,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Introduction to Computer Science",
+      "className": "CS101",
+      "division": "A",
+      "description": "A beginner-friendly introduction to computer science concepts.",
+      "teacherId": {
+        "_id": "60d21b4667d0d8992e610c80",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "studentsEnrolled": []
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Web Development Fundamentals",
+      "className": "WD201",
+      "division": "B",
+      "description": "Learn the basics of web development.",
+      "teacherId": {
+        "_id": "60d21b4667d0d8992e610c80",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "studentsEnrolled": ["60d21b4667d0d8992e610c81"]
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Data Structures and Algorithms",
+      "className": "DS301",
+      "division": "C",
+      "description": "Advanced course on data structures and algorithms.",
+      "teacherId": {
+        "_id": "60d21b4667d0d8992e610c82",
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com"
+      },
+      "studentsEnrolled": []
+    }
+  ]
+}
+```
+
+### 4. Update Course (Teachers Only)
+**Endpoint:** `PUT /api/courses/:id`  
+**Access:** Private (Teachers/Instructors only)
+
+**Example Request Body:**
+```json
+{
+  "title": "Introduction to Computer Science - Updated",
+  "className": "CS101",
+  "division": "A+",
+  "description": "An updated introduction to computer science concepts.",
+  "status": "active"
+}
+```
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Introduction to Computer Science - Updated",
+    "className": "CS101",
+    "division": "A+",
+    "description": "An updated introduction to computer science concepts.",
+    "teacherId": "60d21b4667d0d8992e610c80",
+    "studentsEnrolled": [],
+    "status": "active",
+    "createdAt": "2023-10-01T14:23:45.123Z",
+    "updatedAt": "2023-10-03T16:45:20.789Z"
+  }
+}
+```
+
+**Expected Error Response (403) - If a different teacher tries to update:**
+```json
+{
+  "success": false,
+  "message": "You are not authorized to update this course"
+}
+```
+
+### 5. Delete Course (Teachers Only)
+**Endpoint:** `DELETE /api/courses/:id`  
+**Access:** Private (Teachers/Instructors only)
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Course deleted successfully"
+}
+```
+
+**Expected Error Response (403) - If a different teacher tries to delete:**
+```json
+{
+  "success": false,
+  "message": "You are not authorized to delete this course"
+}
+```
+
+### 6. Enroll in Course (Students Only)
+**Endpoint:** `POST /api/courses/enroll/:id`  
+**Access:** Private (Students only)
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Enrolled in course successfully",
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Introduction to Computer Science",
+    "className": "CS101",
+    "division": "A",
+    "description": "A beginner-friendly introduction to computer science concepts.",
+    "teacherId": "60d21b4667d0d8992e610c80",
+    "studentsEnrolled": ["60d21b4667d0d8992e610c81"],
+    "status": "active",
+    "createdAt": "2023-10-01T14:23:45.123Z",
+    "updatedAt": "2023-10-05T09:12:34.567Z"
+  }
+}
+```
+
+**Expected Error Response (400) - If already enrolled:**
+```json
+{
+  "success": false,
+  "message": "You are already enrolled in this course"
+}
+```
+
+**Expected Error Response (403) - If a teacher tries to enroll:**
+```json
+{
+  "success": false,
+  "message": "User role teacher is not authorized to access this route"
+}
+```
+
+### 7. Get Student's Enrolled Courses
+**Endpoint:** `GET /api/courses/student/enrolled`  
+**Access:** Private (Students only)
+
+**Expected Success Response (200):**
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Introduction to Computer Science",
+      "className": "CS101",
+      "division": "A",
+      "description": "A beginner-friendly introduction to computer science concepts.",
+      "teacherId": {
+        "_id": "60d21b4667d0d8992e610c80",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "studentsEnrolled": ["60d21b4667d0d8992e610c81"],
+      "status": "active",
+      "createdAt": "2023-10-01T14:23:45.123Z",
+      "updatedAt": "2023-10-05T09:12:34.567Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Data Structures and Algorithms",
+      "className": "DS301",
+      "division": "C",
+      "description": "Advanced course on data structures and algorithms.",
+      "teacherId": {
+        "_id": "60d21b4667d0d8992e610c82",
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com"
+      },
+      "studentsEnrolled": ["60d21b4667d0d8992e610c81"],
+      "status": "active",
+      "createdAt": "2023-10-02T11:22:33.444Z",
+      "updatedAt": "2023-10-06T14:15:16.777Z"
+    }
+  ]
+}
+```
+
+**Expected Error Response (403) - If a teacher tries to access:**
+```json
+{
+  "success": false,
+  "message": "User role teacher is not authorized to access this route"
+}
+```
+
+## Testing Workflow
+
+### For Teachers:
+1. Login as a teacher
+2. Create a new course using the Create Course API
+3. Verify the course appears in the teacher's courses list
+4. Update the course details
+5. Try to create, update, or delete a course created by another teacher (should fail)
+6. Try to enroll in a course (should fail)
+7. Delete a course
+
+### For Students:
+1. Login as a student
+2. View all available courses
+3. Try to create a course (should fail)
+4. Enroll in a course
+5. Try to enroll in the same course again (should fail)
+6. View enrolled courses
+7. Try to update or delete a course (should fail)
+
+## Notes
+- All endpoints are protected and require authentication
+- Role-based access control is implemented for course actions
+- Teachers can only modify their own courses
+- Students cannot create or delete courses 

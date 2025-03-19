@@ -15,6 +15,7 @@ connectDB();
 import authRoutes from "./src/routes/auth.routes.js";
 import studentRoutes from "./src/routes/student.routes.js";
 import teacherRoutes from "./src/routes/teacher.routes.js";
+import courseRoutes from "./src/routes/course.routes.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);
+app.use("/api/v1/courses", courseRoutes);
 
 // Base route
 app.get("/", (req, res) => {

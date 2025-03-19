@@ -1,0 +1,120 @@
+# Course Management API Testing Documentation
+
+## Authentication
+Before testing the course endpoints, you need to authenticate:
+
+1. Login as a teacher: 
+   - Method: POST
+   - URL: `http://localhost:5000/api/auth/login`
+   - Body: 
+     ```json
+     {
+       "email": "teacher@example.com",
+       "password": "password123"
+     }
+     ```
+   - Save the token from the response
+
+2. Login as a student:
+   - Method: POST
+   - URL: `http://localhost:5000/api/auth/login`
+   - Body: 
+     ```json
+     {
+       "email": "student@example.com",
+       "password": "password123"
+     }
+     ```
+   - Save the token from the response
+
+## Teacher Endpoints
+
+### 1. Create a Course (Teacher only)
+- Method: POST
+- URL: `http://localhost:5000/api/v1/courses/create`
+- Headers: 
+  - Authorization: Bearer <teacher_token>
+- Body:
+  ```json
+  {
+    "title": "Introduction to Web Development",
+    "className": "Web Dev 101",
+    "division": "A",
+    "description": "A beginner-friendly course on web development basics"
+  }
+  ```
+- Expected Response: 201 Created with course details
+
+### 2. Get Teacher Courses (Teacher only)
+- Method: GET
+- URL: `http://localhost:5000/api/v1/courses/teacher`
+- Headers: 
+  - Authorization: Bearer <teacher_token>
+- Expected Response: 200 OK with array of courses
+
+### 3. Update a Course (Teacher only)
+- Method: PUT
+- URL: `http://localhost:5000/api/v1/courses/:id` (Replace :id with an actual course ID)
+- Headers: 
+  - Authorization: Bearer <teacher_token>
+- Body:
+  ```json
+  {
+    "title": "Advanced Web Development",
+    "className": "Web Dev 201",
+    "division": "B",
+    "description": "An advanced course on web development"
+  }
+  ```
+- Expected Response: 200 OK with updated course
+
+### 4. Delete a Course (Teacher only)
+- Method: DELETE
+- URL: `http://localhost:5000/api/v1/courses/:id` (Replace :id with an actual course ID)
+- Headers: 
+  - Authorization: Bearer <teacher_token>
+- Expected Response: 200 OK with success message
+
+## Student Endpoints
+
+### 1. View All Courses
+- Method: GET
+- URL: `http://localhost:5000/api/v1/courses`
+- Headers: 
+  - Authorization: Bearer <student_token>
+- Expected Response: 200 OK with array of courses
+
+### 2. Enroll in a Course (Student only)
+- Method: POST
+- URL: `http://localhost:5000/api/v1/courses/enroll/:id` (Replace :id with an actual course ID)
+- Headers: 
+  - Authorization: Bearer <student_token>
+- Expected Response: 200 OK with enrollment confirmation
+
+### 3. View Enrolled Courses (Student only)
+- Method: GET
+- URL: `http://localhost:5000/api/v1/courses/student/enrolled`
+- Headers: 
+  - Authorization: Bearer <student_token>
+- Expected Response: 200 OK with array of enrolled courses
+
+## Authorization Testing
+
+### Test: Teachers cannot enroll in courses
+- Method: POST
+- URL: `http://localhost:5000/api/v1/courses/enroll/:id` (Replace :id with an actual course ID)
+- Headers: 
+  - Authorization: Bearer <teacher_token>
+- Expected Response: 403 Forbidden
+
+### Test: Students cannot create/update/delete courses
+- Method: POST
+- URL: `http://localhost:5000/api/v1/courses/create`
+- Headers: 
+  - Authorization: Bearer <student_token>
+- Expected Response: 403 Forbidden
+
+### Test: Teachers can only modify their own courses
+1. Create a course with Teacher 1
+2. Try to update/delete it with Teacher 2
+3. Expected Response: 403 Forbidden 

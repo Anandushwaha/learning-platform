@@ -1,0 +1,134 @@
+# Course Management Frontend Testing Guide
+
+This document outlines the testing procedures for the Course Management frontend functionality of the online learning platform.
+
+## Prerequisites
+- Frontend server running at http://localhost:3000
+- Backend server running at http://localhost:5000
+- Test accounts:
+  - Teacher: teacher@example.com / password123
+  - Student: student@example.com / password123
+
+## Testing Workflow
+
+### 1. Teacher Dashboard - Course Management
+
+#### 1.1 Login as Teacher
+1. Navigate to http://localhost:3000/login
+2. Enter teacher credentials (teacher@example.com / password123)
+3. Click "Login"
+4. **Expected Result**: Redirected to Teacher Dashboard
+
+#### 1.2 Create a New Course
+1. On the Teacher Dashboard, click the "Create Course" tab
+2. Fill in the course details:
+   - Title: "Introduction to JavaScript"
+   - Class Name: "Web Development"
+   - Division: "A"
+   - Description: "Learn the fundamentals of JavaScript programming"
+3. Click "Create Course"
+4. **Expected Result**: 
+   - Success toast notification appears
+   - Course appears in the "My Courses" tab
+
+#### 1.3 Edit a Course
+1. On the "My Courses" tab, find the course you created
+2. Click the "Edit" button
+3. Modify the course details:
+   - Title: "Advanced JavaScript"
+   - Description: "Learn advanced JavaScript concepts and patterns"
+4. Click "Update Course"
+5. **Expected Result**: 
+   - Success toast notification appears
+   - Course details are updated in the list
+
+#### 1.4 Delete a Course
+1. On the "My Courses" tab, find a course you want to delete
+2. Click the "Delete" button
+3. Confirm deletion in the dialog
+4. **Expected Result**: 
+   - Success toast notification appears
+   - Course is removed from the list
+
+#### 1.5 Responsive Design Testing
+1. Resize browser window to different sizes (desktop, tablet, mobile)
+2. **Expected Result**: 
+   - UI adapts to different screen sizes
+   - Course cards reflow from 3 columns to 2 to 1 as screen size decreases
+   - Forms and buttons remain usable at all sizes
+
+### 2. Student Dashboard - Course Enrollment
+
+#### 2.1 Login as Student
+1. Navigate to http://localhost:3000/login
+2. Enter student credentials (student@example.com / password123)
+3. Click "Login"
+4. **Expected Result**: Redirected to Student Dashboard
+
+#### 2.2 Browse Available Courses
+1. On the Student Dashboard, click the "Browse Courses" tab
+2. **Expected Result**: 
+   - List of available courses is displayed
+   - Each course shows title, class name, division, instructor, and enrollment count
+
+#### 2.3 Enroll in a Course
+1. On the "Browse Courses" tab, find a course you want to enroll in
+2. Click the "Enroll" button
+3. **Expected Result**: 
+   - Success toast notification appears
+   - Button changes to "Enrolled" status
+   - Course appears in the "My Courses" tab
+
+#### 2.4 View Enrolled Courses
+1. Click the "My Courses" tab
+2. **Expected Result**: 
+   - List of enrolled courses is displayed
+   - Each course shows title, class name, division, and instructor
+
+#### 2.5 Empty State Testing
+1. If no courses are available or enrolled, check the empty state messages
+2. **Expected Result**: 
+   - Appropriate message is displayed
+   - For empty enrolled courses, a "Browse Available Courses" button is shown
+
+#### 2.6 Responsive Design Testing
+1. Resize browser window to different sizes (desktop, tablet, mobile)
+2. **Expected Result**: 
+   - UI adapts to different screen sizes
+   - Course cards reflow from 3 columns to 2 to 1 as screen size decreases
+
+### 3. Error Handling Testing
+
+#### 3.1 Network Error Testing
+1. Disconnect from the internet or stop the backend server
+2. Try to perform actions like creating a course or enrolling in a course
+3. **Expected Result**: 
+   - Error toast notification appears
+   - UI remains stable and usable
+
+#### 3.2 Form Validation Testing
+1. Try to submit the course creation form with empty required fields
+2. **Expected Result**: 
+   - Error message appears
+   - Form is not submitted
+
+### 4. Authentication Testing
+
+#### 4.1 Access Control Testing
+1. Log out from the application
+2. Try to access protected routes directly (e.g., http://localhost:3000/teacher/dashboard)
+3. **Expected Result**: Redirected to login page
+
+#### 4.2 Role-Based Access Testing
+1. Login as a student
+2. Try to access teacher routes (e.g., http://localhost:3000/teacher/dashboard)
+3. **Expected Result**: Redirected to unauthorized page or student dashboard
+
+## Bug Reporting
+If any issues are found during testing, please document them with the following information:
+1. Test case that failed
+2. Expected behavior
+3. Actual behavior
+4. Steps to reproduce
+5. Browser and device information
+6. Screenshots (if applicable) 

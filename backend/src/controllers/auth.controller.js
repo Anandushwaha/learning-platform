@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -7,6 +8,14 @@ import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields (name, email, password)",
+      });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -17,12 +26,20 @@ export const register = async (req, res) => {
       });
     }
 
-    // Create user
+    // Hash the password
+    const hashedPasswordPromise = bcryptjs.hash(password, 8);
+
+    // We can do other operations while the password is being hashed
+
+    // Get the hashed password
+    const hashedPassword = await hashedPasswordPromise;
+
+    // Create user with hashed password
     const user = await User.create({
       name,
       email,
-      password,
-      role: role || "student",
+      password: hashedPassword,
+      role: role === "instructor" ? "teacher" : role || "student",
     });
 
     // Generate token
@@ -42,6 +59,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("Login request body:", req.body);
 
     // Validate email & password
     if (!email || !password) {
@@ -51,17 +69,17 @@ export const login = async (req, res) => {
       });
     }
 
-    // Check for user
+    // Check for user and ensure password field is selected
     const user = await User.findOne({ email }).select("+password");
-    if (!user) {
+    if (!user || !user.password) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
     }
 
-    // Check if password matches
-    const isMatch = await user.matchPassword(password);
+    // Check if password matches using bcryptjs
+    const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
         success: false,

@@ -1,0 +1,42 @@
+# Manual Instructions for Running the Online Learning Platform
+
+## Running the Backend
+
+1. Open PowerShell
+2. Navigate to the backend directory:
+   ```
+   cd D:\anand\online-learning-platform\online-learning-platform\backend
+   ```
+3. Start the backend server:
+   ```
+   npm run dev
+   ```
+
+## Running the Frontend
+
+1. Open a new PowerShell window
+2. Navigate to the frontend directory:
+   ```
+   cd D:\anand\online-learning-platform\online-learning-platform\frontend
+   ```
+3. Start the frontend server:
+   ```
+   npm run dev
+   ```
+
+## Troubleshooting
+
+If you get an error like "Token '&&' is not a valid statement separator":
+- Don't use '&&' in PowerShell, run commands separately.
+
+If you get "package.json not found" errors:
+- Make sure you're in the correct directory as shown above.
+
+If you get JWT errors:
+- Ensure your .env file in the backend directory has all required variables.
+- You might need to clear your browser cookies and localStorage.
+
+## Accessing the Application
+
+- Backend API: http://localhost:5000
+- Frontend: http://localhost:3000 
