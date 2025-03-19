@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import DashboardLayout from "./DashboardLayout";
 import TeacherCourseManagement from "./TeacherCourseManagement";
+import EnrollmentRequests from "./EnrollmentRequests";
+import EnrollmentInviteModal from "./EnrollmentInviteModal";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
 
@@ -17,6 +19,8 @@ const TeacherDashboard = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState("dashboard");
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
 
   useEffect(() => {
     // Mock data - in a real app, this would be fetched from the backend
@@ -155,9 +159,7 @@ const TeacherDashboard = () => {
       ),
       action: {
         text: "Manage Courses",
-        handler: () => {
-          setActiveView("manageCourses");
-        },
+        handler: () => setActiveView("manageCourses"),
       },
     },
     {
@@ -341,6 +343,28 @@ const TeacherDashboard = () => {
         handler: () => navigate("/teacher/analytics"),
       },
     },
+    {
+      title: "Enrollment Requests",
+      icon: "fas fa-user-plus",
+      content: (
+        <div>
+          <p>Manage student enrollment requests and invites</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              setSelectedCourseId(null);
+              setShowInviteModal(true);
+            }}
+          >
+            <i className="fas fa-plus"></i> Send Invite
+          </button>
+        </div>
+      ),
+      action: {
+        text: "View Requests",
+        handler: () => setActiveView("enrollmentRequests"),
+      },
+    },
   ];
 
   // Add additional styles
@@ -491,6 +515,24 @@ const TeacherDashboard = () => {
         {activeView === "manageCourses" && (
           <TeacherCourseManagement onBack={() => setActiveView("dashboard")} />
         )}
+        {activeView === "enrollmentRequests" && (
+          <EnrollmentRequests
+            userRole="teacher"
+            onBack={() => setActiveView("dashboard")}
+          />
+        )}
+
+        <EnrollmentInviteModal
+          isOpen={showInviteModal}
+          onClose={() => setShowInviteModal(false)}
+          courseId={selectedCourseId}
+          onSuccess={() => {
+            // Refresh the enrollment requests list
+            if (activeView === "enrollmentRequests") {
+              // You might want to add a refresh function to the EnrollmentRequests component
+            }
+          }}
+        />
       </DashboardLayout>
     </>
   );

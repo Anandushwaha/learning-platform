@@ -1,0 +1,40 @@
+.enrollment-stats {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.stat-item i {
+  color: #007bff;
+}
+
+.stat-item .fa-check {
+  color: #28a745;
+}
+
+.stat-item .fa-clock {
+  color: #ffc107;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .enrollment-stats {
+    flex-direction: column;
+  }
+
+  .stat-item {
+    width: 100%;
+    justify-content: center;
+  }
+}

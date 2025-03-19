@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import DashboardLayout from "./DashboardLayout";
 import StudentCourseManagement from "./StudentCourseManagement";
+import EnrollmentRequests from "./EnrollmentRequests";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
 
@@ -134,7 +135,7 @@ const StudentDashboard = () => {
       ),
       action: {
         text: "View All Courses",
-        handler: () => navigate("/student/courses"),
+        handler: () => setActiveView("manageCourses"),
       },
     },
     {
@@ -325,6 +326,27 @@ const StudentDashboard = () => {
         },
       },
     },
+    {
+      title: "Enrollment Requests",
+      icon: "fas fa-user-plus",
+      content: (
+        <div>
+          <p>View and manage your enrollment requests</p>
+          <div className="enrollment-stats">
+            <span className="stat-item">
+              <i className="fas fa-clock"></i> Pending Requests
+            </span>
+            <span className="stat-item">
+              <i className="fas fa-check"></i> Accepted
+            </span>
+          </div>
+        </div>
+      ),
+      action: {
+        text: "View Requests",
+        handler: () => setActiveView("enrollmentRequests"),
+      },
+    },
   ];
 
   // Add additional styles
@@ -421,25 +443,35 @@ const StudentDashboard = () => {
     <>
       <style>{additionalStyles}</style>
       <DashboardLayout pageTitle="Student Dashboard" role="student">
-        <div className="dashboard-boxes">
-          {dashboardBoxes.map((box, index) => (
-            <div key={index} className="dashboard-box">
-              <div className="box-header">
-                <div className="box-icon">
-                  <i className={box.icon}></i>
+        {activeView === "dashboard" && (
+          <div className="dashboard-boxes">
+            {dashboardBoxes.map((box, index) => (
+              <div key={index} className="dashboard-box">
+                <div className="box-header">
+                  <div className="box-icon">
+                    <i className={box.icon}></i>
+                  </div>
+                  <h3 className="box-title">{box.title}</h3>
                 </div>
-                <h3 className="box-title">{box.title}</h3>
+                <div className="box-content">{box.content}</div>
+                <div className="box-footer">
+                  <button className="box-btn" onClick={box.action.handler}>
+                    {box.action.text}
+                  </button>
+                </div>
               </div>
-              <div className="box-content">{box.content}</div>
-              <div className="box-footer">
-                <button className="box-btn" onClick={box.action.handler}>
-                  {box.action.text}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        {activeView === "browseCourses" && <StudentCourseManagement />}
+            ))}
+          </div>
+        )}
+        {activeView === "manageCourses" && (
+          <StudentCourseManagement onBack={() => setActiveView("dashboard")} />
+        )}
+        {activeView === "enrollmentRequests" && (
+          <EnrollmentRequests
+            userRole="student"
+            onBack={() => setActiveView("dashboard")}
+          />
+        )}
       </DashboardLayout>
     </>
   );
